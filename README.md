@@ -21,8 +21,10 @@ including popular DeepSeek, GLM, Qwen ets.
 By 2026, Delphi still lacks proper vibecoding support. Delphi 13 just got a primitive AI assistant, but it doesn't maintain conversation history or context. Delphi 12 Community Edition has nothing at all - and won't get anything. So I built this project to bring modern AI-assisted coding to Delphi developers.
 
 **How it works:** The plugin connects to your local Ollama, which can run either local or cloud models. 
-**Local models** are free but require >8GB GPU VRAM and are slower (10-20 seconds per tiny response). For example, rnj-1
-**Cloud Ollama** works excellently; the free tier has limits (but they're more than sufficient). For example, qwen3-coder
+
+**Local models** are free but require >8GB GPU VRAM and are slower (10-20 seconds per tiny response). For example, rnj-1.
+
+**Cloud Ollama** works excellently; the free tier has limits (but they're more than sufficient). For example, qwen3-coder.
 
 **Context management challenge:** Maintaining context is non-trivial and is handled by the client (plugin), not Ollama. The plugin sends the ENTIRE conversation history to the model, along with every question, occasionally compressing and summarizing context. The compression threshold depends on token limits (see Prefs):
 - **4k-8k tokens** is enough for an hour-long conversation with different code snippets
