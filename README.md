@@ -6,7 +6,7 @@ BPL plugin for Delphi 12+ that integrates Ollama AI directly into the IDE.
 
 
 
-!\[Screenshot](Docs/SCREENSHOTS/main-window.png)
+!\[Screenshot](Docs/Screenshots/1.png)
 
 
 
@@ -24,7 +24,7 @@ BPL plugin for Delphi 12+ that integrates Ollama AI directly into the IDE.
 
 \## 🚀 Quick Install
 
-1\. Download `MiniChatExpert.bpl` from \[Releases](../../releases)
+1\. Download `Bin/DjChat.bpl`
 
 2\. In Delphi: \*\*Component → Install Packages → Add\*\*
 

@@ -10,7 +10,7 @@
 __history/
 __recovery/
 Win32/
-Bpl
+Bpl.lnk
 *.ddp
 *.dproj.local
 *.bdsgroup
