@@ -10,6 +10,7 @@ BPL plugin for Delphi 12+ that integrates Ollama AI directly into the IDE.
 
 
 
+
 \## ✨ Features
 
 \- \*\*Chat with AI\*\* directly in Delphi (Tools → DjChat)
@@ -19,6 +20,7 @@ BPL plugin for Delphi 12+ that integrates Ollama AI directly into the IDE.
 \- \*\*Context-aware\*\* with smart conversation history summarization
 
 \- \*\*Supports any local or cloud Ollama models\*\*
+
 
 
 
@@ -34,6 +36,7 @@ BPL plugin for Delphi 12+ that integrates Ollama AI directly into the IDE.
 
 
 
+
 \## 🔧 Building from Source
 
 1\. Open `Source\\DjChat.dpk`
@@ -41,6 +44,7 @@ BPL plugin for Delphi 12+ that integrates Ollama AI directly into the IDE.
 2\. Build for your Delphi version (requires Delphi 13 just for if..else ternary ops)
 
 3\. Install in Project manager
+
 
 
 
@@ -54,9 +58,11 @@ BPL plugin for Delphi 12+ that integrates Ollama AI directly into the IDE.
 
 
 
+
 \## 🤝 Contributing
 
 Found a bug? Want a feature? Open an Issue or PR!
+
 
 
 
