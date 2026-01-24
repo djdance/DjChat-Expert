@@ -1,0 +1,26 @@
+# Скомпилированные файлы
+*.dcu
+*.dcp
+*.dsk
+*.local
+*.identcache
+*.tvsconfig
+
+# Временные файлы IDE
+__history/
+__recovery/
+Win32/
+Bpl
+*.ddp
+*.dproj.local
+*.bdsgroup
+*.bdsproj
+
+# Файлы пакетов
+*.bpl
+*.drc
+*.map
+
+# Исключения - наши собранные артефакты МОЖНО выкладывать
+!Bin/DjChat.bpl
+!Bin/DjChat.dcp
