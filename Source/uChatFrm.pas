@@ -7,7 +7,10 @@ uses
   Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, System.JSON, IOUtils, Vcl.ExtCtrls,
   System.UITypes, System.IniFiles,Vcl.WinXCtrls,Winapi.Messages,
   IdBaseComponent, IdComponent, IdTCPConnection, IdTCPClient, IdHTTP,
-  Vcl.ComCtrls,  System.Generics.Collections,System.Math;
+  IdGlobal, IdCoderMIME,//test for utf8 post
+  System.StrUtils,
+  Vcl.ComCtrls,  System.Generics.Collections,System.Math, IdIOHandler,
+  IdIOHandlerSocket, IdIOHandlerStack;
 
 const
   cAttachBoundary = '--== Attached entire code file ==--';
@@ -26,7 +29,6 @@ type
     ClearChatButton: TButton;
     PrefsButton: TButton;
     ActivityIndicator1: TActivityIndicator;
-    IdHTTP1: TIdHTTP;
     OptionsPanel: TPanel;
     TokenUsageProgressBar: TProgressBar;
     Label2: TLabel;
@@ -34,10 +36,14 @@ type
     OllamaTestButton: TButton;
     Label3: TLabel;
     ModelComboBox: TComboBox;
-    Label4: TLabel;
-    ModelContextLimitEdit: TEdit;
     SummaryMemo: TMemo;
     SummaryMemoShowButton: TButton;
+    Panel2: TPanel;
+    Label5: TLabel;
+    OllamaSyspromptEdit: TEdit;
+    Panel3: TPanel;
+    Label4: TLabel;
+    ModelContextLimitEdit: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormActivate(Sender: TObject);
@@ -55,10 +61,10 @@ type
   private
     FIsActivated: Boolean; // Флаг для первого запуска
     FHistory: TJSONArray;
+    FActiveHttp:TIdHttp;
     FFileName: string;
     selectedText,selectedFile:string;
     mode:integer;
-    FActiveHttp: TIdHTTP;
     FOldActivityIndicatorProc: TWndMethod;
     FModelContextLimit: Integer; // Хранит лимит контекста (в токенах) для текущей модели
     procedure updateOllamaContextLimit;
@@ -150,7 +156,7 @@ begin
   ForceDirectories(AppDataPath);
   FFileName := TPath.Combine(AppDataPath, 'config.json');
 
-  // Перехватываем сообщения индикатора
+  // Перехватываем сообщения индикатора, чтобы работал клик==отмена
   FOldActivityIndicatorProc := ActivityIndicator1.WindowProc;
   ActivityIndicator1.WindowProc := ActivityIndicatorWindowProc;
 
@@ -301,13 +307,12 @@ var
   SettingsObj: TJSONObject;
   I: Integer;
   Item: TJSONValue;
-  DispStr: string;
-  SavedModel: string;
+  texxt: string;
   Role, Text, Filename: string;
 begin
   if not FileExists(FFileName) then Exit;
   try
-    MainObj := TJSONObject.ParseJSONValue(TFile.ReadAllText(FFileName)) as TJSONObject;
+    MainObj := TJSONObject.ParseJSONValue(TFile.ReadAllText(FFileName, TEncoding.UTF8)) as TJSONObject;
     if not Assigned(MainObj) then Exit;
     try
       // 1. Загружаем Настройки
@@ -316,9 +321,13 @@ begin
         if SettingsObj.TryGetValue('Left', L) and SettingsObj.TryGetValue('Top', T) then
           if SettingsObj.TryGetValue('Width', W) and SettingsObj.TryGetValue('Height', H) then SetBounds(L, T, W, H);
         if SettingsObj.TryGetValue('WindowState', I) then WindowState := TWindowState(I);
-        if SettingsObj.TryGetValue('OllamaUrl', DispStr) then OllamaUrlEdit.text:=DispStr else OllamaUrlEdit.text:='http://localhost:11434';
-        if SettingsObj.TryGetValue('OllamaModel', SavedModel) then ModelComboBox.Text := SavedModel;
-        if SettingsObj.TryGetValue('OllamaContextLimit', SavedModel) then ModelContextLimitEdit.Text := SavedModel;
+        if SettingsObj.TryGetValue('OllamaUrl', texxt) then OllamaUrlEdit.text:=texxt else OllamaUrlEdit.text:='http://localhost:11434';
+        if SettingsObj.TryGetValue('OllamaModel', texxt) then ModelComboBox.Text := texxt;
+        if SettingsObj.TryGetValue('OllamaContextLimit', texxt) then ModelContextLimitEdit.Text := texxt;
+
+        SettingsObj.TryGetValue('OllamaSysprompt', texxt);
+        if texxt.IsEmpty then texxt:='You are an expert Delphi developer. Write modern efficient code: compact style, inline vars, ternary operators. One-liners preferred.';
+        OllamaSyspromptEdit.text:= texxt;
       end;
       updateOllamaContextLimit;
 
@@ -331,7 +340,7 @@ begin
           if Item is TJSONObject then FHistory.AddElement(Item.Clone as TJSONObject);
         end;
         // Отображаем в Memo
-        DispStr := '';
+        texxt := '';
         for I := 0 to FHistory.Count - 1 do begin
           Item := FHistory.Items[I];
           if Item is TJSONObject then begin
@@ -340,12 +349,12 @@ begin
             JObj.TryGetValue('content', Text);
             JObj.TryGetValue('file', Filename);
             if Role<>'system' then //суммаризацию юзеру не выводим
-              DispStr := DispStr + Role + ':'+sLineBreak + trim(Text) + sLineBreak;
-              if Filename<>'' then DispStr := DispStr + cAttachBoundary + ' ' + ExtractFileName(Filename) + sLineBreak;
-              DispStr := DispStr + sLineBreak;
+              texxt := texxt + Role + ':'+sLineBreak + trim(Text) + sLineBreak;
+              if Filename<>'' then texxt := texxt + cAttachBoundary + ' ' + ExtractFileName(Filename) + sLineBreak;
+              texxt := texxt + sLineBreak;
           end;
         end;
-        AnswerMemo.Lines.Text := DispStr;
+        AnswerMemo.Lines.Text := texxt;
         AnswerMemo.SelStart := Length(AnswerMemo.Lines.Text); AnswerMemo.SelLength := 0;//поставим курсор в конец
       end;
     finally
@@ -379,6 +388,7 @@ begin
         SettingsObj.AddPair('Height', TJSONNumber.Create(Height));
         SettingsObj.AddPair('WindowState', TJSONNumber.Create(Integer(WindowState)));
       end;
+      SettingsObj.AddPair('OllamaSysprompt', OllamaSyspromptEdit.Text);
       MainObj.AddPair('Settings', SettingsObj);
     except
       SettingsObj.Free;
@@ -386,7 +396,8 @@ begin
     end;
     // 2. История
     MainObj.AddPair('Messages', FHistory.Clone as TJSONArray);
-    TFile.WriteAllText(FFileName, MainObj.ToString);
+    TFile.WriteAllText(FFileName, MainObj.ToString,TEncoding.UTF8); //кодировку вроде необязательно, но оставим для симметрии.
+    SummaryMemo.Lines.Add('Settings saved to '+FFileName);
   finally
     MainObj.Free;
   end;
@@ -441,8 +452,7 @@ begin
 end;
 
 function TChatForm.GetPost2Ollama(const ABaseUrl: string; AJsonToSend: TJSONObject; const timeout: integer): TJSONObject;
-var  JsonStream: TStringStream;
-  JsonString,RawString: string;
+var RawString: string;
 begin
   Result:=nil;
   if (ABaseUrl = '') or (timeout = 0) then begin // Обработка прерывания (пустой URL или таймаут 0)
@@ -457,20 +467,40 @@ begin
   try
     FActiveHttp.ConnectTimeout := timeout;
     FActiveHttp.ReadTimeout := timeout;
+
+    //необяз.тест.от 500
+    FActiveHttp.Request.Accept := 'application/json';
+    FActiveHttp.Request.ContentType := 'application/json; charset=utf-8';
+    FActiveHttp.HTTPOptions := FActiveHttp.HTTPOptions + [hoNoProtocolErrorException];
+
     if AJsonToSend<>nil then begin
       FActiveHttp.Request.ContentType := 'application/json';
-      JsonString := AJsonToSend.ToString;
-      JsonStream := TStringStream.Create(JsonString, TEncoding.UTF8);
-      RawString := FActiveHttp.Post(ABaseUrl, JsonStream);
-      JsonStream.Free;
+      var JsonString := AJsonToSend.ToString;
+      var JsonStream := TStringStream.Create(JsonString, TEncoding.UTF8);
+      //RawString := FActiveHttp.Post(ABaseUrl, JsonStream);    //так от олламы в 2026 году стала приходить битая кириллица
+      //поэтому перекодируем utf8 сами.
+      var ResponseStream := TStringStream.Create('', TEncoding.UTF8);
+      try
+        FActiveHttp.Post(ABaseUrl, JsonStream, ResponseStream);
+        RawString := ResponseStream.DataString;
+      finally
+        ResponseStream.Free;
+        JsonStream.Free;
+      end;
     end else
       RawString := FActiveHttp.Get(ABaseUrl);
-    //AnswerMemo.Text:=AnswerMemo.Text+sLineBreak+ 'GetPostOllamaJson: got: ' + RawString;
-    if RawString <> '' then Result := TJSONObject.ParseJSONValue(RawString) as TJSONObject;
-  except on E: Exception do begin
-    //AnswerMemo.Text:=AnswerMemo.Text+sLineBreak+ 'GetPostOllamaJson: error: ' + E.Message;
-    Result := TJSONObject.Create.AddPair('error', E.Message);
-  end; end;
+
+    if RawString<>'' then Result := TJSONObject.ParseJSONValue(RawString) as TJSONObject;
+  except
+    on E: EIdHTTPProtocolException do begin
+      // Специальная обработка HTTP ошибок (например, 500)
+      Result := TJSONObject.Create.AddPair('error', Format('HTTP %d: %s', [E.ErrorCode, E.Message]));
+      Result.AddPair('error', E.ErrorMessage);
+    end;
+    on E: Exception do begin
+      Result := TJSONObject.Create.AddPair('error', E.Message);
+    end;
+  end;
   FreeAndNil(FActiveHttp);
   DisableUI(false);
 end;
@@ -494,8 +524,7 @@ begin
         '2.  **Technical References:**  Bullet list of exact entities mentioned - function/class/variable names, files, components.' + sLineBreak +
         'Focus on preserving context for a developer resuming this work. Be concise.'      +
         '=== BEGIN DIALOGUE TO SUMMARIZE ==='
-      else CurrentSysPrompt :=
-        'You are an expert Delphi developer. Write modern efficient code: compact style, inline vars, ternary operators. One-liners preferred.';
+      else CurrentSysPrompt := OllamaSyspromptEdit.Text;
 
     MessagesArray.AddElement(TJSONObject.Create.AddPair('role', 'system').AddPair('content', CurrentSysPrompt));
 
@@ -617,8 +646,12 @@ begin
       end else begin
         //обычный чат
         if AnswerText = '' then AnswerText := 'Error: Empty response';
+
         AnswerMemo.Lines.text:=AnswerMemo.Lines.text //используем Lines.text, а не Lines.Add чтобы были переносы строк из сырой олламы.
-          +'assistant42: '+ sLineBreak +AnswerText +sLineBreak;
+          +'assistant: '+ sLineBreak
+          //+UTF8Decode(AnswerText)
+          +AnswerText
+          +sLineBreak;
         AnswerMemo.Lines.add(''); //чтобы вернула курсор в конец
 
         var MsgObj := TJSONObject.Create;
@@ -667,7 +700,5 @@ begin  //Юзер задает вопрос!
   end).Start;
 
 end;
-
-
 
 end.

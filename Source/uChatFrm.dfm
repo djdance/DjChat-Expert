@@ -264,7 +264,7 @@ object ChatForm: TChatForm
     Left = 0
     Top = 3
     Width = 706
-    Height = 173
+    Height = 181
     Align = alClient
     Ctl3D = True
     ParentCtl3D = False
@@ -329,12 +329,11 @@ object ChatForm: TChatForm
         Left = 3
         Top = 3
         Width = 66
-        Height = 18
+        Height = 15
         Margins.Right = 20
         Align = alLeft
         Caption = 'Attachment:'
         Layout = tlCenter
-        ExplicitHeight = 15
       end
       object AttachFileCheckBox: TCheckBox
         AlignWithMargins = True
@@ -401,14 +400,16 @@ object ChatForm: TChatForm
         Align = alRight
         IndicatorSize = aisSmall
         IndicatorType = aitSectorRing
+        ExplicitWidth = 32
+        ExplicitHeight = 32
       end
     end
   end
   object OptionsPanel: TPanel
     Left = 0
-    Top = 176
+    Top = 184
     Width = 706
-    Height = 171
+    Height = 163
     Align = alBottom
     Caption = 'OptionsPanel'
     DoubleBuffered = True
@@ -418,7 +419,7 @@ object ChatForm: TChatForm
     Visible = False
     DesignSize = (
       706
-      171)
+      163)
     object Label2: TLabel
       AlignWithMargins = True
       Left = 4
@@ -440,19 +441,6 @@ object ChatForm: TChatForm
       Caption = 'Ollama model'
       Layout = tlCenter
       ExplicitWidth = 75
-    end
-    object Label4: TLabel
-      AlignWithMargins = True
-      Left = 4
-      Top = 98
-      Width = 698
-      Height = 15
-      Align = alTop
-      Caption = 
-        'Ollama context length (must match with your Ollama settings) 409' +
-        '6 for tests, 64000 for huge code production'
-      Layout = tlCenter
-      ExplicitWidth = 578
     end
     object OllamaUrlEdit: TEdit
       AlignWithMargins = True
@@ -493,19 +481,9 @@ object ChatForm: TChatForm
       OnCloseUp = ModelComboBoxCloseUp
       OnDropDown = ModelComboBoxDropDown
     end
-    object ModelContextLimitEdit: TEdit
-      AlignWithMargins = True
-      Left = 4
-      Top = 119
-      Width = 698
-      Height = 23
-      Align = alTop
-      TabOrder = 3
-      Text = '4096'
-    end
     object SummaryMemoShowButton: TButton
       Left = 616
-      Top = 97
+      Top = 50
       Width = 84
       Height = 20
       Hint = 'What is sending to Ollama and what was summarized'
@@ -515,9 +493,79 @@ object ChatForm: TChatForm
       Caption = 'Summary log'
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 4
+      TabOrder = 3
       WordWrap = True
       OnClick = SummaryMemoShowButtonClick
+    end
+    object Panel2: TPanel
+      AlignWithMargins = True
+      Left = 4
+      Top = 129
+      Width = 698
+      Height = 27
+      Align = alTop
+      BevelOuter = bvNone
+      Caption = 'Panel2'
+      ShowCaption = False
+      TabOrder = 4
+      object Label5: TLabel
+        Left = 0
+        Top = 0
+        Width = 62
+        Height = 27
+        Align = alLeft
+        AutoSize = False
+        Caption = 'Sysprompt'
+        Layout = tlCenter
+        ExplicitLeft = 3
+        ExplicitTop = 3
+        ExplicitHeight = 22
+      end
+      object OllamaSyspromptEdit: TEdit
+        AlignWithMargins = True
+        Left = 65
+        Top = 3
+        Width = 630
+        Height = 21
+        Align = alClient
+        TabOrder = 0
+        ExplicitHeight = 23
+      end
+    end
+    object Panel3: TPanel
+      AlignWithMargins = True
+      Left = 4
+      Top = 98
+      Width = 698
+      Height = 25
+      Align = alTop
+      BevelOuter = bvNone
+      Caption = 'Panel3'
+      ShowCaption = False
+      TabOrder = 5
+      object Label4: TLabel
+        AlignWithMargins = True
+        Left = 47
+        Top = 3
+        Width = 578
+        Height = 15
+        Align = alClient
+        Caption = 
+          'Ollama context length (must match with your Ollama settings) 409' +
+          '6 for tests, 64000 for huge code production'
+        Layout = tlCenter
+      end
+      object ModelContextLimitEdit: TEdit
+        AlignWithMargins = True
+        Left = 3
+        Top = 3
+        Width = 38
+        Height = 19
+        Align = alLeft
+        TabOrder = 0
+        Text = '4096'
+        ExplicitHeight = 23
+      end
     end
   end
   object TokenUsageProgressBar: TProgressBar
@@ -556,21 +604,5 @@ object ChatForm: TChatForm
     TabOrder = 4
     Visible = False
     WantReturns = False
-  end
-  object IdHTTP1: TIdHTTP
-    ProxyParams.BasicAuthentication = False
-    ProxyParams.ProxyPort = 0
-    Request.ContentLength = -1
-    Request.ContentRangeEnd = -1
-    Request.ContentRangeStart = -1
-    Request.ContentRangeInstanceLength = -1
-    Request.Accept = 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
-    Request.BasicAuthentication = False
-    Request.UserAgent = 'Mozilla/3.0 (compatible; Indy Library)'
-    Request.Ranges.Units = 'bytes'
-    Request.Ranges = <>
-    HTTPOptions = [hoForceEncodeParams]
-    Left = 624
-    Top = 24
   end
 end

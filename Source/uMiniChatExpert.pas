@@ -4,6 +4,7 @@ interface
 
 uses
   Winapi.Windows, System.SysUtils, System.Classes, Vcl.Forms, Vcl.Menus,
+  IdGlobal,
   ToolsAPI, ToolsAPI.Editor,Vcl.Dialogs, uChatFrm,Vcl.Controls;
 
 type
@@ -44,6 +45,7 @@ end;
 constructor TMiniChatExpert.Create;
 begin
   inherited Create;
+  GIdDefaultTextEncoding := encUTF8;  //test   . не помогает.
   AddToToolsMenu;
 end;
 
