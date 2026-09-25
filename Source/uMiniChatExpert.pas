@@ -62,7 +62,7 @@ begin
         if SameText(NTAServices.MainMenu.Items[I].Name, 'ToolsMenu') then begin
           //создаем Tools - меню
           FAIToolsSubMenu := TMenuItem.Create(nil);
-          FAIToolsSubMenu.Caption := 'DjChat - Simple AI Context Vibecoding Expert';//+datetimetostr(now);
+          FAIToolsSubMenu.Caption := 'DjChat - Simple AI vibecoding expert';//+datetimetostr(now);
           FAIToolsSubMenu.Name := 'AIToolsSubMenu';
           NTAServices.MainMenu.Items[I].Add(FAIToolsSubMenu);
           //субменю
@@ -101,7 +101,7 @@ end;
 
 function TMiniChatExpert.GetMenuText: string;
 begin
-  Result := 'DjChat - Simple AI Context Vibecoding Expert';
+  Result := 'DjChat - Simple AI vibecoding expert';
 end;
 
 function TMiniChatExpert.GetName: string;
@@ -216,6 +216,15 @@ end;
 initialization
 
 finalization
+  if Assigned(ChatForm) then begin
+    try
+      ChatForm.PrepareForUnload;
+      ChatForm.Hide;
+      ChatForm.Free;
+    except
+    end;
+    ChatForm := nil;
+  end;
   if (ExpertIndex <> -1) and Assigned(BorlandIDEServices) then begin
     try
       (BorlandIDEServices as IOTAWizardServices).RemoveWizard(ExpertIndex);

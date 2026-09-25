@@ -1,9 +1,9 @@
 object ChatForm: TChatForm
   Left = 0
   Top = 0
-  Caption = 'DjChat - Simple AI Context Vibecoding Expert'
-  ClientHeight = 462
-  ClientWidth = 706
+  Caption = 'DjChat - Simple AI vibecoding expert'
+  ClientHeight = 471
+  ClientWidth = 722
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -244,50 +244,64 @@ object ChatForm: TChatForm
     0000000000000000000000000000000000000000000000000000000000000000
     0000000000000000000000000000}
   OnActivate = FormActivate
+  OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   DesignSize = (
-    706
-    462)
+    722
+    471)
   TextHeight = 15
   object Splitter1: TSplitter
     Left = 0
-    Top = 347
-    Width = 706
+    Top = 335
+    Width = 722
     Height = 7
     Cursor = crVSplit
     Align = alBottom
     ExplicitTop = 397
     ExplicitWidth = 624
   end
-  object AnswerMemo: TMemo
-    Left = 0
-    Top = 3
-    Width = 706
-    Height = 181
-    Align = alClient
-    Ctl3D = True
+  object SummaryMemo: TMemo
+    Left = 368
+    Top = 8
+    Width = 346
+    Height = 158
+    Anchors = [akTop, akRight, akBottom]
+    BevelKind = bkSoft
+    BevelOuter = bvRaised
+    Color = clWindowText
+    Ctl3D = False
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clLime
+    Font.Height = -10
+    Font.Name = 'Tahoma'
+    Font.Style = []
+    Lines.Strings = (
+      'logs will be here...')
     ParentCtl3D = False
+    ParentFont = False
     ReadOnly = True
     ScrollBars = ssVertical
-    TabOrder = 0
+    TabOrder = 3
+    Visible = False
+    WantReturns = False
   end
   object AskPanel: TPanel
     Left = 0
-    Top = 354
-    Width = 706
-    Height = 108
+    Top = 342
+    Width = 722
+    Height = 129
     Align = alBottom
     BevelOuter = bvNone
     Caption = 'AskPanel'
     ShowCaption = False
-    TabOrder = 1
+    TabOrder = 0
     object btnSend: TButton
       AlignWithMargins = True
-      Left = 628
+      Left = 644
       Top = 33
       Width = 75
-      Height = 72
+      Height = 74
       Hint = 'Ctrl+Enter'
       Align = alRight
       Caption = 'Ask'
@@ -300,8 +314,8 @@ object ChatForm: TChatForm
       AlignWithMargins = True
       Left = 3
       Top = 33
-      Width = 619
-      Height = 72
+      Width = 635
+      Height = 74
       Align = alClient
       Ctl3D = True
       ParentCtl3D = False
@@ -309,13 +323,13 @@ object ChatForm: TChatForm
       TabOrder = 0
       WantTabs = True
       OnChange = QuestionMemoChange
-      OnKeyDown = QuestionMemoKeyDown
+      OnKeyPress = QuestionMemoKeyPress
     end
     object Panel1: TPanel
       AlignWithMargins = True
       Left = 3
       Top = 3
-      Width = 700
+      Width = 716
       Height = 24
       Align = alTop
       BevelOuter = bvNone
@@ -329,17 +343,18 @@ object ChatForm: TChatForm
         Left = 3
         Top = 3
         Width = 66
-        Height = 15
+        Height = 18
         Margins.Right = 20
         Align = alLeft
         Caption = 'Attachment:'
         Layout = tlCenter
+        ExplicitHeight = 15
       end
       object AttachFileCheckBox: TCheckBox
         AlignWithMargins = True
         Left = 214
         Top = 3
-        Width = 342
+        Width = 358
         Height = 18
         Margins.Left = 10
         Align = alClient
@@ -347,6 +362,7 @@ object ChatForm: TChatForm
         Ctl3D = True
         ParentCtl3D = False
         TabOrder = 0
+        OnClick = AttachFileCheckBoxClick
       end
       object PasteButton: TButton
         AlignWithMargins = True
@@ -365,7 +381,7 @@ object ChatForm: TChatForm
       end
       object ClearChatButton: TButton
         AlignWithMargins = True
-        Left = 586
+        Left = 602
         Top = 0
         Width = 66
         Height = 24
@@ -379,7 +395,7 @@ object ChatForm: TChatForm
       end
       object PrefsButton: TButton
         AlignWithMargins = True
-        Left = 658
+        Left = 674
         Top = 0
         Width = 39
         Height = 24
@@ -392,7 +408,7 @@ object ChatForm: TChatForm
         OnClick = PrefsButtonClick
       end
       object ActivityIndicator1: TActivityIndicator
-        Left = 559
+        Left = 575
         Top = 0
         Cursor = crAppStart
         Hint = 'Press to abort'
@@ -400,92 +416,77 @@ object ChatForm: TChatForm
         Align = alRight
         IndicatorSize = aisSmall
         IndicatorType = aitSectorRing
-        ExplicitWidth = 32
-        ExplicitHeight = 32
       end
+    end
+    object StatusBar1: TStatusBar
+      Left = 0
+      Top = 110
+      Width = 722
+      Height = 19
+      Panels = <
+        item
+          Width = 50
+        end>
     end
   end
   object OptionsPanel: TPanel
     Left = 0
-    Top = 184
-    Width = 706
+    Top = 172
+    Width = 722
     Height = 163
     Align = alBottom
     Caption = 'OptionsPanel'
     DoubleBuffered = True
     ParentDoubleBuffered = False
     ShowCaption = False
-    TabOrder = 2
+    TabOrder = 1
     Visible = False
     DesignSize = (
-      706
+      722
       163)
     object Label2: TLabel
       AlignWithMargins = True
       Left = 4
       Top = 4
-      Width = 698
+      Width = 714
       Height = 15
       Align = alTop
-      Caption = 'Ollama URL'
+      Caption = 'Ollama URL (example: http://192.168.0.2:11434)'
       Layout = tlCenter
-      ExplicitWidth = 62
+      ExplicitWidth = 249
     end
     object Label3: TLabel
       AlignWithMargins = True
       Left = 4
-      Top = 54
-      Width = 698
+      Top = 48
+      Width = 714
       Height = 15
       Align = alTop
       Caption = 'Ollama model'
       Layout = tlCenter
       ExplicitWidth = 75
     end
-    object OllamaUrlEdit: TEdit
-      AlignWithMargins = True
-      Left = 4
-      Top = 25
-      Width = 698
-      Height = 23
-      Align = alTop
-      Ctl3D = True
-      ParentCtl3D = False
-      TabOrder = 0
-      Text = 'enter URL to Ollama'
-    end
     object OllamaTestButton: TButton
-      Left = 670
+      Left = 539
       Top = 2
-      Width = 30
-      Height = 20
+      Width = 111
+      Height = 18
+      Hint = 'Just to check network'
       Margins.Top = 0
       Margins.Bottom = 0
       Anchors = [akTop, akRight]
-      Caption = 'test'
-      TabOrder = 1
+      Caption = 'test connection'
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 0
       WordWrap = True
       OnClick = OllamaTestButtonClick
     end
-    object ModelComboBox: TComboBox
-      AlignWithMargins = True
-      Left = 4
-      Top = 72
-      Width = 698
-      Height = 23
-      Margins.Top = 0
-      Margins.Bottom = 0
-      Align = alTop
-      TabOrder = 2
-      Text = 'click to load and select a model...'
-      OnCloseUp = ModelComboBoxCloseUp
-      OnDropDown = ModelComboBoxDropDown
-    end
     object SummaryMemoShowButton: TButton
-      Left = 616
-      Top = 50
+      Left = 632
+      Top = 46
       Width = 84
-      Height = 20
+      Height = 18
       Hint = 'What is sending to Ollama and what was summarized'
       Margins.Top = 0
       Margins.Bottom = 0
@@ -493,21 +494,21 @@ object ChatForm: TChatForm
       Caption = 'Summary log'
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 3
+      TabOrder = 1
       WordWrap = True
       OnClick = SummaryMemoShowButtonClick
     end
     object Panel2: TPanel
       AlignWithMargins = True
       Left = 4
-      Top = 129
-      Width = 698
+      Top = 123
+      Width = 714
       Height = 27
       Align = alTop
       BevelOuter = bvNone
       Caption = 'Panel2'
       ShowCaption = False
-      TabOrder = 4
+      TabOrder = 2
       object Label5: TLabel
         Left = 0
         Top = 0
@@ -525,7 +526,7 @@ object ChatForm: TChatForm
         AlignWithMargins = True
         Left = 65
         Top = 3
-        Width = 630
+        Width = 646
         Height = 21
         Align = alClient
         TabOrder = 0
@@ -535,25 +536,27 @@ object ChatForm: TChatForm
     object Panel3: TPanel
       AlignWithMargins = True
       Left = 4
-      Top = 98
-      Width = 698
+      Top = 92
+      Width = 714
       Height = 25
       Align = alTop
       BevelOuter = bvNone
       Caption = 'Panel3'
       ShowCaption = False
-      TabOrder = 5
-      object Label4: TLabel
+      TabOrder = 3
+      object WarnLabel: TLabel
         AlignWithMargins = True
         Left = 47
         Top = 3
-        Width = 578
-        Height = 15
+        Width = 664
+        Height = 19
         Align = alClient
         Caption = 
           'Ollama context length (must match with your Ollama settings) 409' +
-          '6 for tests, 64000 for huge code production'
+          '6 for tests, 32768/64000 for vibecoding'
         Layout = tlCenter
+        ExplicitWidth = 554
+        ExplicitHeight = 15
       end
       object ModelContextLimitEdit: TEdit
         AlignWithMargins = True
@@ -567,42 +570,170 @@ object ChatForm: TChatForm
         ExplicitHeight = 23
       end
     end
+    object Panel4: TPanel
+      Left = 1
+      Top = 22
+      Width = 720
+      Height = 23
+      Align = alTop
+      BevelOuter = bvNone
+      Caption = 'Panel4'
+      ShowCaption = False
+      TabOrder = 4
+      object OpenRouterApiKeyEdit: TEdit
+        AlignWithMargins = True
+        Left = 360
+        Top = 0
+        Width = 357
+        Height = 23
+        Margins.Top = 0
+        Margins.Bottom = 0
+        Align = alRight
+        Anchors = []
+        AutoSize = False
+        Ctl3D = True
+        ParentCtl3D = False
+        TabOrder = 0
+        Text = 'API key'
+        Visible = False
+      end
+      object modelUrlEdit: TComboBox
+        AlignWithMargins = True
+        Left = 3
+        Top = 0
+        Width = 351
+        Height = 23
+        Margins.Top = 0
+        Margins.Bottom = 0
+        Align = alClient
+        AutoComplete = False
+        TabOrder = 1
+        OnChange = modelUrlEditChange
+        Items.Strings = (
+          'http://192.168.0.2:11434'
+          'http://openrouter.ai - not supported yet')
+      end
+    end
+    object Button1: TButton
+      Left = 488
+      Top = 46
+      Width = 138
+      Height = 18
+      Hint = 'What is sending to Ollama and what was summarized'
+      Margins.Top = 0
+      Margins.Bottom = 0
+      Anchors = [akTop, akRight]
+      Caption = 'Help me with models!'
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 5
+      WordWrap = True
+      OnClick = Button1Click
+    end
+    object OllamaPingButton: TButton
+      Left = 656
+      Top = 2
+      Width = 60
+      Height = 18
+      Hint = 'Will ask AI to answer simply "YES"'
+      Margins.Top = 0
+      Margins.Bottom = 0
+      Anchors = [akTop, akRight]
+      Caption = 'ping AI'
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 6
+      WordWrap = True
+      OnClick = OllamaPingButtonClick
+    end
+    object Panel5: TPanel
+      Left = 1
+      Top = 66
+      Width = 720
+      Height = 23
+      Align = alTop
+      BevelOuter = bvNone
+      Caption = 'Panel5'
+      ShowCaption = False
+      TabOrder = 7
+      object ModelComboBox: TComboBox
+        AlignWithMargins = True
+        Left = 3
+        Top = 0
+        Width = 351
+        Height = 23
+        Margins.Top = 0
+        Margins.Bottom = 0
+        Align = alClient
+        AutoComplete = False
+        TabOrder = 0
+        OnCloseUp = ModelComboBoxCloseUp
+        OnDropDown = ModelComboBoxDropDown
+      end
+      object ModelCommentEdit: TEdit
+        AlignWithMargins = True
+        Left = 360
+        Top = 0
+        Width = 357
+        Height = 23
+        Margins.Top = 0
+        Margins.Bottom = 0
+        Align = alRight
+        Anchors = []
+        AutoSize = False
+        Ctl3D = True
+        ParentCtl3D = False
+        TabOrder = 1
+        Text = 'Model comment'
+        OnChange = ModelCommentEditChange
+      end
+    end
   end
   object TokenUsageProgressBar: TProgressBar
     Left = 0
     Top = 0
-    Width = 706
+    Width = 722
     Height = 3
     Hint = 'Tokens needed for context'
     Align = alTop
     ParentShowHint = False
     Position = 50
     ShowHint = True
-    TabOrder = 3
+    TabOrder = 2
   end
-  object SummaryMemo: TMemo
-    Left = 352
-    Top = 8
-    Width = 346
-    Height = 162
-    Anchors = [akTop, akRight, akBottom]
-    BevelKind = bkSoft
-    BevelOuter = bvRaised
-    Color = clWindowText
+  object AnswerRichEdit: TRichEdit
+    AlignWithMargins = True
+    Left = 3
+    Top = 3
+    Width = 716
+    Height = 166
+    Margins.Top = 0
+    Align = alClient
+    BevelInner = bvNone
+    BevelOuter = bvNone
+    BorderStyle = bsNone
     Ctl3D = False
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clLime
-    Font.Height = -10
-    Font.Name = 'Tahoma'
+    EnableURLs = True
+    Font.Charset = RUSSIAN_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -12
+    Font.Name = 'Segoe UI'
     Font.Style = []
-    Lines.Strings = (
-      'logs will be here...')
+    HideSelection = False
+    HideScrollBars = False
     ParentCtl3D = False
     ParentFont = False
     ReadOnly = True
-    ScrollBars = ssVertical
+    ScrollBars = ssBoth
     TabOrder = 4
-    Visible = False
-    WantReturns = False
+  end
+  object ActionList1: TActionList
+    Left = 672
+    Top = 402
+    object Action1: TAction
+      Caption = 'Ask'
+      ShortCut = 16397
+      OnExecute = Action1Execute
+    end
   end
 end
